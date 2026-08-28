@@ -1,4 +1,4 @@
-# build_img
+# enclave-kit
 
 LXQt desktop qcow2 image builder.
 
