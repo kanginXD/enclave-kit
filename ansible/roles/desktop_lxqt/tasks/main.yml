@@ -1,4 +1,4 @@
 ---
 - ansible.builtin.import_tasks: packages.yml
 - ansible.builtin.import_tasks: firefox.yml
-- ansible.builtin.import_tasks: display_manager.yml
+- ansible.builtin.import_tasks: xrdp.yml

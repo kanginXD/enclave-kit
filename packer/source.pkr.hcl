@@ -6,7 +6,8 @@ source "qemu" "ubuntu" {
   vm_name          = var.vm_name
   output_directory = "${path.root}/${var.output_directory}"
   format           = "qcow2"
-  disk_size        = "40G"
+  skip_resize_disk = !local.resize_disk
+  disk_size        = local.resize_disk ? tostring(local.disk_size) : null
   disk_interface   = "virtio"
   net_device       = "virtio-net"
 
@@ -23,8 +24,7 @@ source "qemu" "ubuntu" {
   efi_firmware_vars = var.efi_firmware_vars
   efi_drop_efivars  = false
 
-  # NoCloud over HTTP (SMBIOS serial ds=nocloud). cidata CD + cd_content fails on aarch64 UEFI.
-  # https://cloudinit.readthedocs.io/en/latest/reference/datasources/nocloud.html
+  # NoCloud via HTTP. Packer cd_content is not usable on aarch64 UEFI.
   http_content = {
     "/user-data" = templatefile("${path.root}/cloud-init/user-data.yml.tftpl", {
       ssh_username   = var.ssh_username
@@ -46,6 +46,6 @@ source "qemu" "ubuntu" {
   ssh_handshake_attempts    = 100
   ssh_clear_authorized_keys = true
 
-  # cloud-init clean, remove packer user (-f: SSH session active), power off.
+  # userdel -f: Packer SSH session is still open.
   shutdown_command = "sudo sh -c 'cloud-init clean --logs --seed || true; rm -rf /var/lib/cloud/instances /var/lib/cloud/instance /home/${var.ssh_username}/.ssh; userdel -rf ${var.ssh_username}; shutdown -P now'"
 }

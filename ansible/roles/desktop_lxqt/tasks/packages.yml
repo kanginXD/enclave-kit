@@ -1,12 +1,5 @@
 ---
-- name: Preseed SDDM as default display manager
-  ansible.builtin.debconf:
-    name: sddm
-    question: shared/default-x-display-manager
-    vtype: select
-    value: sddm
-
-- name: Install LXQt desktop packages
+- name: Install LXQt and xrdp
   ansible.builtin.apt:
     name: "{{ lxqt_packages + desktop_packages }}"
     state: present

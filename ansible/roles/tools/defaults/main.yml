@@ -1,9 +1,4 @@
 ---
-known_tools:
-  - cursor
-  - claude
-  - tailscale
-
 tool_apt_repos:
   cursor:
     apt_repo_label: Cursor

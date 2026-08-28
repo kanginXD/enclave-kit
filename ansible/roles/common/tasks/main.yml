@@ -2,5 +2,6 @@
 - ansible.builtin.import_tasks: bootstrap.yml
 - ansible.builtin.import_tasks: user.yml
 - ansible.builtin.import_tasks: packages.yml
+- ansible.builtin.import_tasks: grow_root.yml
 - ansible.builtin.import_tasks: shell.yml
 - ansible.builtin.import_tasks: home.yml

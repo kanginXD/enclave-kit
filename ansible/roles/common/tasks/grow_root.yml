@@ -1,0 +1,28 @@
+---
+- name: Install grow-root helper
+  ansible.builtin.copy:
+    src: grow-root.sh
+    dest: /usr/local/sbin/grow-root
+    mode: "0755"
+    owner: root
+    group: root
+
+- name: Install grow-root systemd unit
+  ansible.builtin.copy:
+    src: grow-root.service
+    dest: /etc/systemd/system/grow-root.service
+    mode: "0644"
+    owner: root
+    group: root
+
+- name: Enable grow-root on boot
+  ansible.builtin.systemd:
+    name: grow-root.service
+    enabled: true
+    daemon_reload: true
+
+- name: Grow root filesystem now
+  ansible.builtin.command:
+    argv:
+      - /usr/local/sbin/grow-root
+  changed_when: true

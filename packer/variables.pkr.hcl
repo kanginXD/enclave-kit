@@ -20,7 +20,7 @@ variable "efi_firmware_vars" {
   description = "Writable UEFI variable store for the build VM."
 }
 
-# Pre-generated key required: ephemeral SSHPublicKey is injected after cd_content render.
+# Packer QEMU injects SSHPublicKey after cd_content render:
 # https://github.com/hashicorp/packer-plugin-qemu/issues/182
 variable "ssh_private_key_file" {
   type        = string
@@ -40,7 +40,7 @@ variable "ssh_username" {
 
 variable "guest_config" {
   type        = string
-  description = "Absolute path to guest YAML (username, password, ssh_authorized_keys, packages, tools, desktop)."
+  description = "Absolute path to guest config YAML."
 }
 
 variable "output_directory" {

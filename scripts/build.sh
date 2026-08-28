@@ -79,7 +79,6 @@ if [[ ! -f $EFI_VARS ]]; then
   dd if=/dev/zero of="$EFI_VARS" bs=1048576 count=64 status=none
 fi
 
-# Pre-generated keypair; see packer/variables.pkr.hcl (ssh_private_key_file).
 SSH_DIR="$(mktemp -d "${TMPDIR:-/tmp}/packer-ssh.XXXXXX")"
 cleanup() {
   rm -rf "$SSH_DIR"

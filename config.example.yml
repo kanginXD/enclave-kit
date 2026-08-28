@@ -1,20 +1,20 @@
 # Copy to config.yml.
 username: dev
+password: changeme
 
-# Empty or omitted: password auth locked; sudo is NOPASSWD.
-password:
-
-# OpenSSH public keys for the guest user.
+# Required. OpenSSH public keys.
 ssh_authorized_keys: []
 
-# Extra apt package names. Empty or omitted installs none.
+# Guest disk size. Omit to keep the cloud image size.
+disk_size: 64G
+
 packages: []
 
-# Supported: cursor, claude, tailscale. Empty or omitted installs none.
+# cursor, claude, tailscale
 tools:
   - cursor
   - claude
   - tailscale
 
-# Supported: lxqt. Empty or omitted installs no desktop.
+# lxqt
 desktop: lxqt

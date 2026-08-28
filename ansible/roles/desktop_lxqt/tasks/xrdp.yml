@@ -1,0 +1,38 @@
+---
+- name: Ensure LXQt XDG config directory exists
+  ansible.builtin.file:
+    path: /etc/xdg/lxqt
+    state: directory
+    mode: "0755"
+
+- name: Install LXQt session config
+  ansible.builtin.copy:
+    src: session.conf
+    dest: /etc/xdg/lxqt/session.conf
+    mode: "0644"
+    owner: root
+    group: root
+
+- name: Install xrdp session script
+  ansible.builtin.copy:
+    src: startwm.sh
+    dest: /etc/xrdp/startwm.sh
+    mode: "0755"
+    owner: root
+    group: root
+
+- name: Allow xrdp to read TLS certificates
+  ansible.builtin.user:
+    name: xrdp
+    groups: ssl-cert
+    append: true
+
+- name: Enable xrdp
+  ansible.builtin.systemd:
+    name: xrdp
+    enabled: true
+    state: restarted
+
+- name: Set default systemd target to multi-user
+  ansible.builtin.command: systemctl set-default multi-user.target
+  changed_when: true

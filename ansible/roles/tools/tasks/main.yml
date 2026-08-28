@@ -1,11 +1,4 @@
 ---
-- name: Reject unknown tools
-  ansible.builtin.assert:
-    that:
-      - tools | default([], true) is not string
-      - tools | default([], true) is subset(known_tools)
-    fail_msg: "unknown tools; supported: {{ known_tools | join(', ') }}"
-
 - name: Install {{ item }} apt repository and package
   ansible.builtin.include_tasks: install_apt_repo.yml
   vars:
@@ -17,9 +10,9 @@
     apt_repo_list: "{{ tool_apt_repos[item].apt_repo_list }}"
     apt_repo_sources: "{{ tool_apt_repos[item].apt_repo_sources }}"
     apt_repo_package: "{{ tool_apt_repos[item].apt_repo_package }}"
-  loop: "{{ tools | default([], true) | unique }}"
+  loop: "{{ tools }}"
   when: item in tool_apt_repos
 
 - name: Install Tailscale
   ansible.builtin.include_tasks: tailscale.yml
-  when: tools | default([], true) is contains("tailscale")
+  when: tools is contains("tailscale")

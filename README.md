@@ -1,6 +1,6 @@
 # enclave-kit
 
-LXQt desktop qcow2 image builder.
+Headless VM image builder. Run AI in an isolated guest so the host stays untouched. YOLO mode: give the agent full scope inside the enclave, not on your machine.
 
 ## Requires
 
@@ -12,25 +12,22 @@ LXQt desktop qcow2 image builder.
 
 ## Configure
 
-Copy `config.example.yml` to `config.yml` (or another `*.yml`). Default path:
-`config.yml` at the repo root. Override with `-c`.
-
-- `username`, optional `password`, `ssh_authorized_keys`
-- `packages`: extra apt package names (empty or omitted installs none)
-- `tools`: `cursor`, `claude`, `tailscale` (empty or omitted installs none)
-- `desktop`: `lxqt` (empty or omitted installs no desktop)
-
-Empty or omitted `password` creates the account with password auth locked and
-passwordless sudo. SDDM autologin does not require a password.
+Copy `config.example.yml` to `config.yml`. Add at least one `ssh_authorized_keys` entry. `password` defaults to `changeme`. Pass another file with `-c`.
 
 ## Build
 
 ```bash
 ./scripts/build.sh /path/to/image.img
-./scripts/build.sh -c server.config.yml /path/to/image.img
+./scripts/build.sh -c path/to/config.yml /path/to/image.img
 ./scripts/build.sh -f /path/to/image.img
 ```
 
-Output: `output/enclave.qcow2`. `-f` overwrites that directory.
+Writes `output/enclave.qcow2`. `-f` replaces that directory.
 
-Env: `EFI_CODE` — default in `scripts/build.sh`.
+`EFI_CODE` selects the aarch64 UEFI firmware blob. Default is in `scripts/build.sh`.
+
+## Connect
+
+**Recommended:** put `tailscale` in `tools`, join the guest to a Tailnet, and reach RDP from anywhere on that network.
+
+Forward guest TCP 3389 to the host. Connect with an RDP client (FreeRDP, Microsoft Remote Desktop) as `username` / `password` from the guest config.

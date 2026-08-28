@@ -1,0 +1,8 @@
+---
+known_tools:
+  - cursor
+  - claude
+  - tailscale
+
+known_desktops:
+  - lxqt

@@ -10,9 +10,9 @@ common_packages:
   - gnupg
   - scdaemon
   - pcscd
-  - spice-vdagent
   - qemu-guest-agent
   - zsh
   - curl
   - acl
   - vim
+  - cloud-guest-utils

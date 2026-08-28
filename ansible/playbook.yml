@@ -2,16 +2,64 @@
 - name: Provision guest image
   hosts: all
   become: true
-  vars:
-    known_desktops:
-      - lxqt
+  vars_files:
+    - vars/supported.yml
   pre_tasks:
+    - name: Load guest config
+      ansible.builtin.include_vars:
+        file: "{{ guest_config }}"
+
+    - name: Require guest username
+      ansible.builtin.assert:
+        that:
+          - username is defined
+          - username is string
+          - username | length > 0
+        fail_msg: username must be set in the guest config
+
+    - name: Require guest password
+      ansible.builtin.assert:
+        that:
+          - password | default('', true) is string
+          - password | default('', true) | length > 0
+        fail_msg: password must be set in the guest config
+
+    - name: Require SSH authorized keys
+      ansible.builtin.assert:
+        that:
+          - ssh_authorized_keys | default([], true) is not string
+          - ssh_authorized_keys | default([], true) | length > 0
+          - ssh_authorized_keys | default([], true) | reject("string") | list | length == 0
+        fail_msg: ssh_authorized_keys must be a non-empty list of OpenSSH public keys
+
+    - name: Reject invalid extra packages
+      ansible.builtin.assert:
+        that:
+          - packages | default([], true) is not string
+          - packages | default([], true) | reject("string") | list | length == 0
+        fail_msg: packages must be a list of apt package names
+
+    - name: Reject unknown tools
+      ansible.builtin.assert:
+        that:
+          - tools | default([], true) is not string
+          - tools | default([], true) is subset(known_tools)
+        fail_msg: "unknown tools; supported: {{ known_tools | join(', ') }}"
+
     - name: Reject unknown desktop
       ansible.builtin.assert:
         that:
           - desktop | default('', true) is string
           - desktop | default('', true) in ([''] + known_desktops)
         fail_msg: "unknown desktop; supported: {{ known_desktops | join(', ') }}"
+
+    - name: Normalize guest config
+      ansible.builtin.set_fact:
+        password: "{{ password | default('', true) }}"
+        ssh_authorized_keys: "{{ ssh_authorized_keys | default([], true) }}"
+        packages: "{{ packages | default([], true) | unique }}"
+        tools: "{{ tools | default([], true) | unique }}"
+        desktop: "{{ desktop | default('', true) }}"
   roles:
     - common
     - tools
@@ -19,4 +67,4 @@
     - name: Apply desktop environment
       ansible.builtin.include_role:
         name: "desktop_{{ desktop }}"
-      when: desktop | default('', true) | length > 0
+      when: desktop | length > 0

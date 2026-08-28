@@ -1,7 +1,10 @@
 ---
 lxqt_packages:
-  - lxqt
+  - lxqt-core
   - openbox
+  - xrdp
+  - xorgxrdp
+  - dbus-x11
 
 desktop_packages:
   - xclip

@@ -11,5 +11,6 @@ packer/.cache/
 *.retry
 
 temp/
+.ansible-tmp/
 
 .DS_Store
