@@ -1,0 +1,24 @@
+---
+- name: Set default display manager to SDDM
+  ansible.builtin.copy:
+    dest: /etc/X11/default-display-manager
+    content: "/usr/bin/sddm\n"
+    mode: "0644"
+
+- name: Configure SDDM autologin into LXQt
+  ansible.builtin.copy:
+    dest: /etc/sddm.conf.d/autologin.conf
+    mode: "0644"
+    content: |
+      [Autologin]
+      User={{ username }}
+      Session=lxqt
+
+- name: Enable SDDM for next boot
+  ansible.builtin.systemd:
+    name: sddm
+    enabled: true
+
+- name: Set default systemd target to graphical
+  ansible.builtin.command: systemctl set-default graphical.target
+  changed_when: true

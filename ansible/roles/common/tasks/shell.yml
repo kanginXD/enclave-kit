@@ -1,0 +1,28 @@
+---
+- name: Ensure Downloads directory exists
+  ansible.builtin.file:
+    path: "/home/{{ username }}/Downloads"
+    state: directory
+    owner: "{{ username }}"
+    group: "{{ username }}"
+    mode: "0755"
+
+- name: Clone Oh My Zsh
+  ansible.builtin.git:
+    repo: https://github.com/ohmyzsh/ohmyzsh.git
+    dest: "/home/{{ username }}/.oh-my-zsh"
+    version: master
+    depth: 1
+    update: false
+  become: true
+  become_user: "{{ username }}"
+
+- name: Install default .zshrc from Oh My Zsh template
+  ansible.builtin.copy:
+    src: "/home/{{ username }}/.oh-my-zsh/templates/zshrc.zsh-template"
+    dest: "/home/{{ username }}/.zshrc"
+    remote_src: true
+    owner: "{{ username }}"
+    group: "{{ username }}"
+    mode: "0644"
+    force: false

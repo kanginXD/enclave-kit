@@ -1,0 +1,31 @@
+---
+- ansible.builtin.import_tasks: bootstrap.yml
+- ansible.builtin.import_tasks: user.yml
+- ansible.builtin.import_tasks: packages.yml
+- ansible.builtin.import_tasks: firefox.yml
+- ansible.builtin.import_tasks: shell.yml
+
+- ansible.builtin.import_tasks: install_apt_repo.yml
+  vars:
+    apt_repo_label: Cursor
+    apt_repo_key_url: https://downloads.cursor.com/keys/anysphere.asc
+    apt_repo_key_download: /tmp/anysphere.asc
+    apt_repo_keyring: /etc/apt/keyrings/cursor.gpg
+    apt_repo_fingerprint: 380FF4BCDC34A4BD92A3565342A1772E62E492D6
+    apt_repo_list: /etc/apt/sources.list.d/cursor.list
+    apt_repo_sources: deb [arch=amd64,arm64 signed-by=/etc/apt/keyrings/cursor.gpg] https://downloads.cursor.com/aptrepo stable main
+    apt_repo_package: cursor
+
+- ansible.builtin.import_tasks: install_apt_repo.yml
+  vars:
+    apt_repo_label: Claude Code
+    apt_repo_key_url: https://downloads.claude.ai/keys/claude-code.asc
+    apt_repo_key_download: /tmp/claude-code.asc
+    apt_repo_keyring: /etc/apt/keyrings/claude-code.gpg
+    apt_repo_fingerprint: 31DDDE24DDFAB679F42D7BD2BAA929FF1A7ECACE
+    apt_repo_list: /etc/apt/sources.list.d/claude-code.list
+    apt_repo_sources: deb [signed-by=/etc/apt/keyrings/claude-code.gpg] https://downloads.claude.ai/claude-code/apt/stable stable main
+    apt_repo_package: claude-code
+
+- ansible.builtin.import_tasks: tailscale.yml
+- ansible.builtin.import_tasks: home.yml

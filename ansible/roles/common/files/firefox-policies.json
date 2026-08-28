@@ -1,0 +1,49 @@
+{
+  "policies": {
+    "HttpsOnlyMode": "enabled",
+    "OfferToSaveLoginsDefault": false,
+    "DisableTelemetry": true,
+    "DisableFirefoxStudies": true,
+    "OverrideFirstRunPage": "",
+    "SkipTermsOfUse": true,
+    "UserMessaging": {
+      "SkipOnboarding": true
+    },
+    "AutofillAddressEnabled": false,
+    "AutofillCreditCardEnabled": false,
+    "Preferences": {
+      "privacy.globalprivacycontrol.enabled": {
+        "Value": true,
+        "Status": "locked"
+      },
+      "browser.download.always_ask_before_handling_new_types": {
+        "Value": true,
+        "Status": "locked"
+      }
+    },
+    "PromptForDownloadLocation": true,
+    "EnableTrackingProtection": {
+      "Value": true,
+      "Category": "strict",
+      "Locked": false
+    },
+    "FirefoxHome": {
+      "Search": true,
+      "TopSites": false,
+      "SponsoredTopSites": false,
+      "Highlights": false,
+      "Pocket": false,
+      "Stories": false,
+      "SponsoredPocket": false,
+      "SponsoredStories": false,
+      "Snippets": false,
+      "Locked": true
+    },
+    "ExtensionSettings": {
+      "uBlock0@raymondhill.net": {
+        "installation_mode": "normal_installed",
+        "install_url": "https://addons.mozilla.org/firefox/downloads/latest/ublock-origin/latest.xpi"
+      }
+    }
+  }
+}

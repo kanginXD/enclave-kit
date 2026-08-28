@@ -1,0 +1,14 @@
+---
+- name: Ensure Firefox policies directory exists
+  ansible.builtin.file:
+    path: /etc/firefox/policies
+    state: directory
+    mode: "0755"
+
+- name: Install Firefox enterprise policies
+  ansible.builtin.copy:
+    src: firefox-policies.json
+    dest: /etc/firefox/policies/policies.json
+    mode: "0644"
+    owner: root
+    group: root

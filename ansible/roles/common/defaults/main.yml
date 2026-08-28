@@ -1,0 +1,30 @@
+---
+username: dev
+user_shell: /usr/bin/zsh
+user_password: password
+user_sudo: "ALL=(ALL) ALL"
+
+common_packages:
+  - git
+  - gnupg
+  - scdaemon
+  - pcscd
+  - spice-vdagent
+  - qemu-guest-agent
+  - zsh
+  - curl
+  - acl
+  - vim
+  - xclip
+  - fonts-noto-cjk
+  - fcitx5
+  - fcitx5-hangul
+  - pipewire-audio
+  - mesa-utils
+  - firefox
+
+im_environment:
+  - GTK_IM_MODULE=fcitx
+  - QT_IM_MODULE=fcitx
+  - XMODIFIERS=@im=fcitx
+  - SDL_IM_MODULE=fcitx

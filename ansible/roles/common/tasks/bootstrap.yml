@@ -1,0 +1,14 @@
+---
+- name: Wait for cloud-init to finish
+  ansible.builtin.command: cloud-init status --wait
+  changed_when: false
+
+- name: Ensure snapd is running
+  ansible.builtin.systemd:
+    name: snapd
+    state: started
+    enabled: true
+
+- name: Wait for snap seeding to complete
+  ansible.builtin.command: snap wait system seed.loaded
+  changed_when: false

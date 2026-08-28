@@ -1,0 +1,7 @@
+---
+- name: Provision LXQt desktop image
+  hosts: all
+  become: true
+  roles:
+    - common
+    - desktop_lxqt

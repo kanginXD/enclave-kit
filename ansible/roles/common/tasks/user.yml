@@ -1,0 +1,22 @@
+---
+- name: Ensure primary group exists
+  ansible.builtin.group:
+    name: "{{ username }}"
+    state: present
+
+- name: Ensure primary user exists
+  ansible.builtin.user:
+    name: "{{ username }}"
+    group: "{{ username }}"
+    shell: "{{ user_shell }}"
+    password: "{{ user_password | password_hash('sha512') }}"
+    update_password: on_create
+    create_home: true
+    state: present
+
+- name: Configure sudo for primary user
+  ansible.builtin.copy:
+    dest: "/etc/sudoers.d/{{ username }}"
+    content: "{{ username }} {{ user_sudo }}\n"
+    mode: "0440"
+    validate: visudo -cf %s

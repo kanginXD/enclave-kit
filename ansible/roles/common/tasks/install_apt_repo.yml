@@ -1,0 +1,47 @@
+---
+- name: Ensure apt keyrings directory exists ({{ apt_repo_label }})
+  ansible.builtin.file:
+    path: /etc/apt/keyrings
+    state: directory
+    mode: "0755"
+
+- name: Download {{ apt_repo_label }} signing key
+  ansible.builtin.get_url:
+    url: "{{ apt_repo_key_url }}"
+    dest: "{{ apt_repo_key_download }}"
+    mode: "0644"
+
+- name: Verify {{ apt_repo_label }} signing key fingerprint
+  ansible.builtin.command:
+    argv:
+      - gpg
+      - --show-keys
+      - "{{ apt_repo_key_download }}"
+  register: apt_repo_gpg
+  changed_when: false
+  failed_when: >-
+    apt_repo_fingerprint not in
+    (apt_repo_gpg.stdout | regex_replace('[^0-9A-Fa-f]', '') | upper)
+
+- name: Install {{ apt_repo_label }} signing key
+  ansible.builtin.command:
+    argv:
+      - gpg
+      - --dearmor
+      - -o
+      - "{{ apt_repo_keyring }}"
+      - "{{ apt_repo_key_download }}"
+  args:
+    creates: "{{ apt_repo_keyring }}"
+
+- name: Add {{ apt_repo_label }} apt repository
+  ansible.builtin.copy:
+    dest: "{{ apt_repo_list }}"
+    content: "{{ apt_repo_sources }}\n"
+    mode: "0644"
+
+- name: Install {{ apt_repo_label }} package
+  ansible.builtin.apt:
+    name: "{{ apt_repo_package }}"
+    state: present
+    update_cache: true
