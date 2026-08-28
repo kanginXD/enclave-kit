@@ -1,6 +1,9 @@
 ---
 user_shell: /usr/bin/zsh
 ssh_authorized_keys: []
+tools: []
+desktop: ""
+packages: []
 
 common_packages:
   - git
@@ -13,16 +16,3 @@ common_packages:
   - curl
   - acl
   - vim
-  - xclip
-  - fonts-noto-cjk
-  - fcitx5
-  - fcitx5-hangul
-  - pipewire-audio
-  - mesa-utils
-  - firefox
-
-im_environment:
-  - GTK_IM_MODULE=fcitx
-  - QT_IM_MODULE=fcitx
-  - XMODIFIERS=@im=fcitx
-  - SDL_IM_MODULE=fcitx

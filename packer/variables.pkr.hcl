@@ -40,17 +40,17 @@ variable "ssh_username" {
 
 variable "guest_config" {
   type        = string
-  description = "Absolute path to guest identity YAML (username, password, ssh_authorized_keys)."
+  description = "Absolute path to guest YAML (username, password, ssh_authorized_keys, packages, tools, desktop)."
 }
 
 variable "output_directory" {
   type        = string
-  default     = "../output/lxqt"
+  default     = "../output"
   description = "Directory for the output qcow2 image."
 }
 
 variable "vm_name" {
   type        = string
-  default     = "lxqt.qcow2"
+  default     = "enclave.qcow2"
   description = "Filename of the output disk image."
 }

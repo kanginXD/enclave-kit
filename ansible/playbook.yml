@@ -1,7 +1,22 @@
 ---
-- name: Provision LXQt desktop image
+- name: Provision guest image
   hosts: all
   become: true
+  vars:
+    known_desktops:
+      - lxqt
+  pre_tasks:
+    - name: Reject unknown desktop
+      ansible.builtin.assert:
+        that:
+          - desktop | default('', true) is string
+          - desktop | default('', true) in ([''] + known_desktops)
+        fail_msg: "unknown desktop; supported: {{ known_desktops | join(', ') }}"
   roles:
     - common
-    - desktop_lxqt
+    - tools
+  tasks:
+    - name: Apply desktop environment
+      ansible.builtin.include_role:
+        name: "desktop_{{ desktop }}"
+      when: desktop | default('', true) | length > 0

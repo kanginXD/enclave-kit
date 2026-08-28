@@ -4,21 +4,25 @@
     update_cache: true
     cache_valid_time: 3600
 
+- name: Reject invalid extra packages
+  ansible.builtin.assert:
+    that:
+      - packages | default([], true) is not string
+      - packages | default([], true) | reject("string") | list | length == 0
+    fail_msg: packages must be a list of apt package names
+
 - name: Install common packages
   ansible.builtin.apt:
     name: "{{ common_packages }}"
     state: present
-  notify: Rebuild font cache
+
+- name: Install extra packages
+  ansible.builtin.apt:
+    name: "{{ packages | unique }}"
+    state: present
+  when: packages | default([], true) | length > 0
 
 - name: Enable qemu-guest-agent for next boot
   ansible.builtin.systemd:
     name: qemu-guest-agent
     enabled: true
-
-- name: Append input-method environment
-  ansible.builtin.lineinfile:
-    path: /etc/environment
-    line: "{{ item }}"
-    create: true
-    mode: "0644"
-  loop: "{{ im_environment }}"

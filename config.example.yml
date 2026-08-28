@@ -6,3 +6,15 @@ password:
 
 # OpenSSH public keys for the guest user.
 ssh_authorized_keys: []
+
+# Extra apt package names. Empty or omitted installs none.
+packages: []
+
+# Supported: cursor, claude, tailscale. Empty or omitted installs none.
+tools:
+  - cursor
+  - claude
+  - tailscale
+
+# Supported: lxqt. Empty or omitted installs no desktop.
+desktop: lxqt

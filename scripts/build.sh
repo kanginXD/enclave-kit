@@ -4,11 +4,12 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 
 usage() {
-  echo "usage: ./scripts/build.sh [-f] /path/to/image.img" >&2
+  echo "usage: ./scripts/build.sh [-f] [-c config.yml] /path/to/image.img" >&2
   exit 1
 }
 
 FORCE=()
+CONFIG=
 IMAGE=
 
 while [[ $# -gt 0 ]]; do
@@ -16,6 +17,14 @@ while [[ $# -gt 0 ]]; do
     -f|--force)
       FORCE=(-force)
       shift
+      ;;
+    -c|--config)
+      if [[ $# -lt 2 ]]; then
+        echo "missing config path" >&2
+        usage
+      fi
+      CONFIG=$2
+      shift 2
       ;;
     -*)
       echo "unknown option: $1" >&2
@@ -42,11 +51,18 @@ fi
 
 IMAGE_ABS="$(cd "$(dirname "$IMAGE")" && pwd)/$(basename "$IMAGE")"
 
-CONFIG="$ROOT/config.yml"
+if [[ -z $CONFIG ]]; then
+  CONFIG="$ROOT/config.yml"
+fi
 if [[ ! -f $CONFIG ]]; then
-  echo "missing config.yml; copy config.example.yml to config.yml" >&2
+  if [[ $CONFIG == "$ROOT/config.yml" ]]; then
+    echo "missing config.yml; copy config.example.yml to config.yml" >&2
+  else
+    echo "config not found: $CONFIG" >&2
+  fi
   exit 1
 fi
+CONFIG="$(cd "$(dirname "$CONFIG")" && pwd)/$(basename "$CONFIG")"
 
 EFI_CODE="${EFI_CODE:-/opt/homebrew/share/qemu/edk2-aarch64-code.fd}"
 if [[ ! -f $EFI_CODE ]]; then

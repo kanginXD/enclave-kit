@@ -2,3 +2,18 @@
 lxqt_packages:
   - lxqt
   - openbox
+
+desktop_packages:
+  - xclip
+  - fonts-noto-cjk
+  - fcitx5
+  - fcitx5-hangul
+  - pipewire-audio
+  - mesa-utils
+  - firefox
+
+im_environment:
+  - GTK_IM_MODULE=fcitx
+  - QT_IM_MODULE=fcitx
+  - XMODIFIERS=@im=fcitx
+  - SDL_IM_MODULE=fcitx

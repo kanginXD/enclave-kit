@@ -8,6 +8,15 @@
 
 - name: Install LXQt desktop packages
   ansible.builtin.apt:
-    name: "{{ lxqt_packages }}"
+    name: "{{ lxqt_packages + desktop_packages }}"
     state: present
     dpkg_options: force-overwrite
+  notify: Rebuild font cache
+
+- name: Append input-method environment
+  ansible.builtin.lineinfile:
+    path: /etc/environment
+    line: "{{ item }}"
+    create: true
+    mode: "0644"
+  loop: "{{ im_environment }}"

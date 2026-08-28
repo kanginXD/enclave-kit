@@ -31,8 +31,8 @@ source "qemu" "ubuntu" {
       ssh_public_key = var.ssh_public_key
     })
     "/meta-data" = <<-EOT
-      instance-id: lxqt
-      local-hostname: dev-lxqt
+      instance-id: enclave
+      local-hostname: enclave
     EOT
   }
 
