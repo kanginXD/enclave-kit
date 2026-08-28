@@ -62,6 +62,7 @@
         desktop: "{{ desktop | default('', true) }}"
   roles:
     - common
+    - utilities
     - tools
   tasks:
     - name: Apply desktop environment

@@ -1,0 +1,32 @@
+---
+- name: Install host firewall
+  ansible.builtin.package:
+    name: "{{ enclave_firewall_packages[ansible_pkg_mgr] }}"
+    state: present
+  when: enclave_firewall_packages[ansible_pkg_mgr | default('')] is defined
+
+- name: Install enclave library directory
+  ansible.builtin.file:
+    path: "{{ enclave_lib_dir }}"
+    state: directory
+    mode: "0755"
+    owner: root
+    group: root
+
+- name: Install enclave libraries
+  ansible.builtin.copy:
+    src: "lib/{{ item }}"
+    dest: "{{ enclave_lib_dir }}/{{ item }}"
+    mode: "0644"
+    owner: root
+    group: root
+  loop: "{{ enclave_utility_libs }}"
+
+- name: Install utility commands
+  ansible.builtin.copy:
+    src: "bin/{{ item }}"
+    dest: "{{ enclave_bin_dir }}/{{ item }}"
+    mode: "0755"
+    owner: root
+    group: root
+  loop: "{{ enclave_utility_commands }}"

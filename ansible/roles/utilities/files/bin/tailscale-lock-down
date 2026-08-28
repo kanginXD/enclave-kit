@@ -1,0 +1,85 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ENCLAVE_LIB=${ENCLAVE_LIB:-/usr/local/lib/enclave}
+
+usage() {
+  echo "usage: tailscale-lock-down [--force]"
+}
+
+FORCE=0
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    --force)
+      FORCE=1
+      shift
+      ;;
+    -h | --help)
+      usage
+      exit 0
+      ;;
+    *)
+      usage >&2
+      exit 2
+      ;;
+  esac
+done
+
+if [[ $(id -u) -ne 0 ]]; then
+  echo "tailscale-lock-down: run as root" >&2
+  exit 1
+fi
+
+# shellcheck source=/usr/local/lib/enclave/ssh.sh
+. "${ENCLAVE_LIB}/ssh.sh"
+# shellcheck source=/usr/local/lib/enclave/tailscale.sh
+. "${ENCLAVE_LIB}/tailscale.sh"
+# shellcheck source=/usr/local/lib/enclave/firewall.sh
+. "${ENCLAVE_LIB}/firewall.sh"
+
+if ! command -v tailscale >/dev/null 2>&1; then
+  echo "tailscale-lock-down: tailscale is not installed" >&2
+  exit 1
+fi
+
+if ! enclave_tailscale_connected; then
+  echo "tailscale-lock-down: Tailscale is not connected. Run: tailscale up" >&2
+  exit 1
+fi
+
+if ! enclave_tailscale_iface_present; then
+  echo "tailscale-lock-down: interface ${ENCLAVE_TAILSCALE_IFACE} not found" >&2
+  exit 1
+fi
+
+if [[ -n ${SSH_CONNECTION:-} && $FORCE -eq 0 ]]; then
+  client=${SSH_CONNECTION%% *}
+  if ! enclave_ip_on_tailnet "$client"; then
+    echo "tailscale-lock-down: SSH client ${client} is not on the tailnet. Reconnect over Tailscale or pass --force." >&2
+    exit 1
+  fi
+fi
+
+enclave_firewall_load
+
+mapfile -t ports < <(enclave_ssh_listen_ports)
+if [[ ${#ports[@]} -eq 0 ]]; then
+  echo "tailscale-lock-down: no SSH listen ports from sshd" >&2
+  exit 1
+fi
+
+iface=$ENCLAVE_TAILSCALE_IFACE
+
+enclave_fw_default_deny_incoming
+enclave_fw_default_allow_outgoing
+enclave_fw_allow_in_on_iface "$iface"
+
+for port in "${ports[@]}"; do
+  enclave_fw_delete_allow_port "$port" tcp
+done
+
+enclave_fw_enable
+enclave_fw_drop_allows_except_iface "$iface"
+enclave_fw_reload
+
+echo "inbound traffic allowed only on ${iface}; ssh ports: ${ports[*]}"

@@ -1,0 +1,17 @@
+---
+enclave_lib_dir: /usr/local/lib/enclave
+enclave_bin_dir: /usr/local/bin
+
+# Keys are ansible_pkg_mgr values. Package is installed, not enabled.
+enclave_firewall_packages:
+  apt:
+    - ufw
+
+enclave_utility_libs:
+  - firewall.sh
+  - firewall-ufw.sh
+  - ssh.sh
+  - tailscale.sh
+
+enclave_utility_commands:
+  - tailscale-lock-down

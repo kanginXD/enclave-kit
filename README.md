@@ -1,6 +1,6 @@
 # enclave-kit
 
-Headless VM image builder. Run AI in an isolated guest so the host stays untouched. YOLO mode: give the agent full scope inside the enclave, not on your machine.
+Headless VM image builder. Isolate the environment, unleash the agent.
 
 ## Requires
 
@@ -28,6 +28,18 @@ Writes `output/enclave.qcow2`. `-f` replaces that directory.
 
 ## Connect
 
-**Recommended:** put `tailscale` in `tools`, join the guest to a Tailnet, and reach RDP from anywhere on that network.
+Put `tailscale` in `tools`. On the guest, `sudo tailscale up`, then SSH or RDP to the Tailscale address.
 
-Forward guest TCP 3389 to the host. Connect with an RDP client (FreeRDP, Microsoft Remote Desktop) as `username` / `password` from the guest config.
+To reach RDP from the host, forward guest TCP 3389 and connect as `username` / `password` from the guest config.
+
+## Utilities
+
+Guest commands in `/usr/local/bin`.
+
+### tailscale-lock-down
+
+```bash
+sudo tailscale-lock-down
+```
+
+Requires Tailscale to be connected. Allows inbound traffic only on the Tailscale interface. SSH listen ports come from `sshd`. `--force` skips the SSH-client tailnet check.

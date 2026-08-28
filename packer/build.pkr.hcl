@@ -13,7 +13,7 @@ build {
 
     extra_arguments = [
       "--become",
-      # Path only. @file extra-vars beat set_fact and keep YAML null as null.
+      # guest_config is a file path, not @file.
       "--extra-vars", "guest_config=${var.guest_config}",
       "--extra-vars", "ansible_python_interpreter=/usr/bin/python3",
     ]
