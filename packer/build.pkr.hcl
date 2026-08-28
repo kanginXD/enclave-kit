@@ -13,8 +13,7 @@ build {
 
     extra_arguments = [
       "--become",
-      "--extra-vars", "username=${var.username}",
-      "--extra-vars", "user_password=${var.user_password}",
+      "--extra-vars", "@${var.guest_config}",
       "--extra-vars", "ansible_python_interpreter=/usr/bin/python3",
     ]
   }

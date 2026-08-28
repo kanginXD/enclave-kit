@@ -38,17 +38,9 @@ variable "ssh_username" {
   description = "Temporary SSH user created by cloud-init; removed at shutdown."
 }
 
-variable "username" {
+variable "guest_config" {
   type        = string
-  default     = "dev"
-  description = "Primary user provisioned by Ansible."
-}
-
-variable "user_password" {
-  type        = string
-  default     = "password"
-  sensitive   = true
-  description = "Login password for the primary user."
+  description = "Absolute path to guest identity YAML (username, password, ssh_authorized_keys)."
 }
 
 variable "output_directory" {

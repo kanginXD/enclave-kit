@@ -3,12 +3,37 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 
-if [[ $# -ne 1 ]]; then
-  echo "usage: ./scripts/build.sh /path/to/image.img" >&2
+usage() {
+  echo "usage: ./scripts/build.sh [-f] /path/to/image.img" >&2
   exit 1
-fi
+}
 
-IMAGE=$1
+FORCE=()
+IMAGE=
+
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    -f|--force)
+      FORCE=(-force)
+      shift
+      ;;
+    -*)
+      echo "unknown option: $1" >&2
+      usage
+      ;;
+    *)
+      if [[ -n $IMAGE ]]; then
+        usage
+      fi
+      IMAGE=$1
+      shift
+      ;;
+  esac
+done
+
+if [[ -z $IMAGE ]]; then
+  usage
+fi
 
 if [[ ! -f $IMAGE ]]; then
   echo "image not found: $IMAGE" >&2
@@ -16,6 +41,12 @@ if [[ ! -f $IMAGE ]]; then
 fi
 
 IMAGE_ABS="$(cd "$(dirname "$IMAGE")" && pwd)/$(basename "$IMAGE")"
+
+CONFIG="$ROOT/config.yml"
+if [[ ! -f $CONFIG ]]; then
+  echo "missing config.yml; copy config.example.yml to config.yml" >&2
+  exit 1
+fi
 
 EFI_CODE="${EFI_CODE:-/opt/homebrew/share/qemu/edk2-aarch64-code.fd}"
 if [[ ! -f $EFI_CODE ]]; then
@@ -43,17 +74,14 @@ SSH_KEY="$SSH_DIR/packer_ed25519"
 ssh-keygen -t ed25519 -N "" -f "$SSH_KEY" -C "packer-build" >/dev/null
 SSH_PUB="$(tr -d '\n' <"${SSH_KEY}.pub")"
 
-USERNAME="${USERNAME:-dev}"
-USER_PASSWORD="${USER_PASSWORD:-password}"
-
 cd "$ROOT/packer"
 packer init .
 packer build \
+  "${FORCE[@]}" \
   -var "image=${IMAGE_ABS}" \
   -var "efi_firmware_code=${EFI_CODE}" \
   -var "efi_firmware_vars=${EFI_VARS}" \
   -var "ssh_private_key_file=${SSH_KEY}" \
   -var "ssh_public_key=${SSH_PUB}" \
-  -var "username=${USERNAME}" \
-  -var "user_password=${USER_PASSWORD}" \
+  -var "guest_config=${CONFIG}" \
   .

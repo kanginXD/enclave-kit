@@ -5,6 +5,12 @@
     content: "/usr/bin/sddm\n"
     mode: "0644"
 
+- name: Ensure SDDM drop-in directory exists
+  ansible.builtin.file:
+    path: /etc/sddm.conf.d
+    state: directory
+    mode: "0755"
+
 - name: Configure SDDM autologin into LXQt
   ansible.builtin.copy:
     dest: /etc/sddm.conf.d/autologin.conf

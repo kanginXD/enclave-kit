@@ -45,7 +45,6 @@ source "qemu" "ubuntu" {
   ssh_timeout               = "30m"
   ssh_handshake_attempts    = 100
   ssh_clear_authorized_keys = true
-  boot_wait                 = "15s"
 
   # cloud-init clean, remove packer user (-f: SSH session active), power off.
   shutdown_command = "sudo sh -c 'cloud-init clean --logs --seed || true; rm -rf /var/lib/cloud/instances /var/lib/cloud/instance /home/${var.ssh_username}/.ssh; userdel -rf ${var.ssh_username}; shutdown -P now'"

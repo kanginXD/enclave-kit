@@ -1,8 +1,6 @@
 ---
-username: dev
 user_shell: /usr/bin/zsh
-user_password: password
-user_sudo: "ALL=(ALL) ALL"
+ssh_authorized_keys: []
 
 common_packages:
   - git

@@ -1,4 +1,11 @@
 ---
+- name: Require guest username
+  ansible.builtin.assert:
+    that:
+      - username is defined
+      - username | length > 0
+    fail_msg: username must be set in config.yml
+
 - name: Ensure primary group exists
   ansible.builtin.group:
     name: "{{ username }}"
@@ -9,7 +16,8 @@
     name: "{{ username }}"
     group: "{{ username }}"
     shell: "{{ user_shell }}"
-    password: "{{ user_password | password_hash('sha512') }}"
+    password: "{{ password | password_hash('sha512') if password | default('', true) else omit }}"
+    password_lock: "{{ not (password | default('', true)) }}"
     update_password: on_create
     create_home: true
     state: present
@@ -17,6 +25,13 @@
 - name: Configure sudo for primary user
   ansible.builtin.copy:
     dest: "/etc/sudoers.d/{{ username }}"
-    content: "{{ username }} {{ user_sudo }}\n"
+    content: "{{ username }} {{ 'ALL=(ALL) NOPASSWD:ALL' if not (password | default('', true)) else 'ALL=(ALL) ALL' }}\n"
     mode: "0440"
     validate: visudo -cf %s
+
+- name: Install SSH authorized keys for primary user
+  ansible.builtin.authorized_key:
+    user: "{{ username }}"
+    exclusive: true
+    key: "{{ ssh_authorized_keys | join('\n') }}"
+  when: ssh_authorized_keys | default([]) | length > 0

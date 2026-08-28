@@ -1,0 +1,8 @@
+# Copy to config.yml.
+username: dev
+
+# Empty or omitted: password auth locked; sudo is NOPASSWD.
+password:
+
+# OpenSSH public keys for the guest user.
+ssh_authorized_keys: []
